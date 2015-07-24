@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:flex="http://www.springframework.org/schema/flex"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+		
+		<context:annotation-config/>
+	<context:component-scan base-package="org.jasig.cas.thrift.server"/>
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="casDataSource" />  
+    </bean>  
+    
+    <!-- 创建SqlSessionFactory，同时指定数据源 -->  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <property name="dataSource" ref="casDataSource" />  
+        <property name="mapperLocations">
+         <list>
+          <value>classpath*:org/jasig/cas/mapper/xml/*.xml</value>
+         </list>
+        </property>
+    </bean>  
+    
+    <tx:annotation-driven  transaction-manager="transactionManager"/>  
+    <!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="org.jasig.cas.mapper" />  
+    </bean>  
+    
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
